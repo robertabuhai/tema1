@@ -12,6 +12,9 @@ int main()
     int length2 = 3;
     int width2 = 4;
 
+    string colour1 = "blue";
+    string colour2 = "red";
+
     //item 6 - disallowed the use of the copy constructor
     //         and the copy assignment operator
 
@@ -95,32 +98,32 @@ int main()
 
     //item 12
 
-    class Square: private Rectangle{
+    class ColouredRectangle: private Rectangle{
         private:
-            int theLength;
+            string theColour;
 
-        public: Square(const int& length):
-            Rectangle(length, length),theLength(length)
+        public: ColouredRectangle(const int& length, const string& colour):
+            Rectangle(length, length),theColour(colour)
             {
-                cout << "\nSquare constructor";
+                cout << "\nColouredRectangle constructor";
             }
 
         public: 
-            Square& operator=(const Square& rhs){
+            ColouredRectangle& operator=(const ColouredRectangle& rhs){
                 if(this == &rhs){
-                    cout << "\nSquare self-assignment";
+                    cout << "\nColouredRectangle self-assignment";
                     return *this;
                 }
                 Rectangle::operator=(rhs);
-                theLength = rhs.theLength;
-                cout << "\nSquare copy-assignment";
+                theColour = rhs.theColour;
+                cout << "\nColouredRectangle copy-assignment";
                 return *this;
             }
 
         
         public:
-            int getLength(){
-                return this->theLength;
+            void print(){
+                cout << "L = " << this->getLength() << ", colour = " << this->theColour;
             }
     };
 
@@ -167,17 +170,23 @@ int main()
     
     cout << "\n5.";
 
-    Square square1(length1);
-    Square square2(length2);
+    ColouredRectangle blueRectangle(length1, colour1);
+    ColouredRectangle redRectangle(length2, colour2);
 
-    cout << "\nSquare 1: L = " << square1.getLength();
-    cout << "\nSquare 2: L = " << square2.getLength() << "\n";
+    cout << "\nColouredRectangle 1: ";
+    blueRectangle.print();
+    cout << "\nColouredRectangle 2: ";
+    redRectangle.print();
+    cout << "\n";
 
-    square1 = square1;
-    square1 = square2;
+    blueRectangle = blueRectangle;
+    blueRectangle = redRectangle;
 
-    cout << "\nSquare 1: L = " << square1.getLength();
-    cout << "\nSquare 2: L = " << square2.getLength() << "\n\n";
+    cout << "\nColouredRectangle 1: ";
+    blueRectangle.print();
+    cout << "\nColouredRectangle 2: ";
+    redRectangle.print();
+    cout << "\n\n";
 
     return 0;
 }
