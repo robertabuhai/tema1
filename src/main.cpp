@@ -1,4 +1,5 @@
 #include <iostream>
+#include <memory>
 
 using namespace std;
 
@@ -36,6 +37,8 @@ int main()
         private:
             int theLength = 0;
             int theWidth = 0;
+
+        public: Rectangle(){}
 
         public: Rectangle(const int& length, const int& width):
             theLength(length),
@@ -101,6 +104,7 @@ int main()
     class ColouredRectangle: private Rectangle{
         private:
             string theColour;
+            int locked = 0;
 
         public: ColouredRectangle(const int& length, const string& colour):
             Rectangle(length, length),theColour(colour)
@@ -116,6 +120,7 @@ int main()
                 }
                 Rectangle::operator=(rhs);
                 theColour = rhs.theColour;
+                locked = rhs.locked;
                 cout << "\nColouredRectangle copy-assignment";
                 return *this;
             }
@@ -125,9 +130,32 @@ int main()
             void print(){
                 cout << "L = " << this->getLength() << ", colour = " << this->theColour;
             }
+
+        void lock(int l){
+            locked = l;
+        }
+
+        int getLocked(){
+            return locked;
+        }
     };
 
-    Rectangle rectangle1(length1, width1);
+    class Lock: private Uncopyable{
+        public:
+            explicit Lock(ColouredRectangle& pcr): crPtr(pcr){
+                cout << "\nLocked\n";
+                crPtr.lock(1);
+            }
+            ~Lock(){
+                cout << "\nUnlocked\n";
+                crPtr.lock(0);
+            }
+
+        private:
+            ColouredRectangle& crPtr;
+    };
+
+    /*Rectangle rectangle1(length1, width1);
     Rectangle rectangle2(length2, width2);
     Rectangle rectangle3(length2, width2);
 
@@ -186,7 +214,31 @@ int main()
     blueRectangle.print();
     cout << "\nColouredRectangle 2: ";
     redRectangle.print();
-    cout << "\n\n";
+    cout << "\n\n";*/
+
+    //item 13
+
+    auto_ptr<Rectangle> apRectangle1(new Rectangle);
+    cout << "\nRectangle 1: L = " << apRectangle1->getLength() << ", W = " << apRectangle1->getWidth();
+    auto_ptr<Rectangle> apRectangle2(apRectangle1);
+    cout << "\nRectangle 1: L = " << apRectangle2->getLength() << ", W = " << apRectangle2->getWidth() << "\n";
+    //cout << "\nRectangle 1: L = " << apRectangle1->getLength() << ", W = " << apRectangle1->getWidth();
+    
+    shared_ptr<Rectangle> spRectangle1(new Rectangle);
+    cout << "\nRectangle 1: L = " << spRectangle1->getLength() << ", W = " << spRectangle1->getWidth();
+    shared_ptr<Rectangle> spRectangle2(spRectangle1);
+    cout << "\nRectangle 1: L = " << spRectangle2->getLength() << ", W = " << spRectangle2->getWidth();
+    cout << "\nRectangle 1: L = " << spRectangle1->getLength() << ", W = " << spRectangle1->getWidth() << "\n";
+    
+    //item 14
+
+    ColouredRectangle blueRectangle(length1, colour1);
+
+    Lock* crl = new Lock(blueRectangle);
+    cout << blueRectangle.getLocked() << "\n";
+    
+    delete(crl);
+    cout << blueRectangle.getLocked() << "\n";
 
     return 0;
 }
